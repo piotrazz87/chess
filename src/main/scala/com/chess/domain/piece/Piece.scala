@@ -1,16 +1,11 @@
 package com.chess.domain.piece
 
-import com.chess.domain.MoveType
-import com.chess.domain.piece.Opponent.Player
+import com.chess.domain.Move
+import com.chess.domain.Opponent.Player
 
 trait Piece {
   val player: Player
   val shortName: Player => String
-  val moveType: MoveType
-}
 
-object Opponent {
-  sealed trait Player
-  object White extends Player
-  object Black extends Player
+  def canMakeMove(move: Move): Boolean
 }

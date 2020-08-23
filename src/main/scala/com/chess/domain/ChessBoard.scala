@@ -3,10 +3,10 @@ package com.chess.domain
 import com.chess.BoardSize
 import com.chess.domain.ChessBoard.{lineSeparator, rowSeparator, verticalBoardLabel}
 import com.chess.domain.piece.Piece
-import com.chess.model.GameState
 
 class ChessBoard private (val board: Array[Array[Int]] = Array.ofDim[Int](BoardSize, BoardSize)) {
 
+  //TODO:print in functional way
   def draw(pieces: Map[Position, Piece]) {
     println(verticalBoardLabel)
     println(s"$lineSeparator")
@@ -37,9 +37,4 @@ object ChessBoard {
   private val verticalBoardLabel = ('a' to 'h').mkString("    ", "   ", "")
   private val horizontalBoardLabel = 1 to 8
   private val lineSeparator = horizontalBoardLabel.map(_ => "+---").mkString("   ", "", "+")
-
-}
-
-object Test extends App {
-  ChessBoard().draw(GameState.initialize.pieces)
 }

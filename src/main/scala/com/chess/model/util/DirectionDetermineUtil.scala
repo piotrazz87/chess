@@ -1,8 +1,8 @@
-package com.chess.model
+package com.chess.model.util
 
 import com.chess.domain.Move
 
-object ValidationUtil {
+object DirectionDetermineUtil {
 
   def isDiagonalMove(move: Move): Boolean =
     Math.abs(move.from.x - move.to.x) - Math.abs(move.from.y - move.to.y) == 0

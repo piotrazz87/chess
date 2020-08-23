@@ -1,13 +1,17 @@
 package com.chess
 
 import com.chess.domain.{ChessBoard, Move, Position}
-import com.chess.model.{ChessmanService, GameState}
+import com.chess.model.GameState
+import com.chess.model.service.{CheckService, ChessmanService}
+import com.chess.model.validator.PieceMoveValidator
 
 object Main extends App {
 
   val board = ChessBoard()
   implicit val state = GameState.initialize
-  val service = new ChessmanService
+
+  val moveValidator = new PieceMoveValidator()
+  val service = new ChessmanService(moveValidator, new CheckService(moveValidator))
 
   board.draw(state.pieces)
   service.makeMove(Move(Position(3, 0), Position(0, 3))) match {

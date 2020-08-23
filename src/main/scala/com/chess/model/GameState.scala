@@ -1,16 +1,14 @@
 package com.chess.model
 
-import com.chess.domain.piece.Opponent.{Player, White}
+import com.chess.domain.Opponent.{Player, White}
 import com.chess.domain.piece._
-import com.chess.domain.{Move, Position}
+import com.chess.domain.{Move, Opponent, Position}
 
-case class GameState private (pieces: Map[Position, Piece], checkedPlayer: Option[Player] = None, nextPlayer: Player) {
-
-  def update(movingPiece: Piece, move: Move): GameState = {
-    val newPieces = pieces.filterNot(_._1 == move.from) + (move.to -> movingPiece)
-    this.copy(pieces = newPieces)
-  }
-}
+case class GameState private (
+    pieces: Map[Position, Piece],
+    checkOnPlayer: Option[Player] = None,
+    movingPlayer: Player
+)
 
 object GameState {
   def initialize: GameState = {
@@ -26,8 +24,8 @@ object GameState {
       Position(5, 0) -> Bishop(Opponent.Black),
       Position(6, 0) -> Knight(Opponent.Black),
       Position(7, 0) -> Rook(Opponent.Black),
-      Position(0, 1) -> Pawn(Opponent.White),
-      Position(1, 1) -> Pawn(Opponent.White),
+      Position(0, 1) -> Pawn(Opponent.Black),
+      Position(1, 1) -> Pawn(Opponent.Black),
       Position(2, 1) -> Pawn(Opponent.Black),
       Position(3, 1) -> Pawn(Opponent.Black),
       Position(4, 1) -> Pawn(Opponent.Black),
@@ -55,6 +53,6 @@ object GameState {
       Position(7, 6) -> Pawn(Opponent.White)
     )
 
-    GameState(startPieces, nextPlayer = White)
+    GameState(startPieces, movingPlayer = White)
   }
 }
