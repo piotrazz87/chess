@@ -10,6 +10,25 @@ object GameState {
   def initialize: GameState = {
     val startPieces = Map(
       /**
+        * Initial pieces for player of Whites
+        */
+      Position(0, 7) -> Rook(PieceColor.White),
+      Position(1, 7) -> Knight(PieceColor.White),
+      Position(2, 7) -> Bishop(PieceColor.White),
+      Position(3, 7) -> Queen(PieceColor.White),
+      Position(4, 7) -> King(PieceColor.White),
+      Position(5, 7) -> Bishop(PieceColor.White),
+      Position(6, 7) -> Knight(PieceColor.White),
+      Position(7, 7) -> Rook(PieceColor.White),
+      Position(0, 6) -> Pawn(PieceColor.White),
+      Position(1, 6) -> Pawn(PieceColor.White),
+      Position(2, 6) -> Pawn(PieceColor.White),
+      Position(3, 6) -> Pawn(PieceColor.White),
+      Position(4, 6) -> Pawn(PieceColor.White),
+      Position(5, 6) -> Pawn(PieceColor.White),
+      Position(6, 6) -> Pawn(PieceColor.White),
+      Position(7, 6) -> Pawn(PieceColor.White),
+      /**
         * Initial pieces for player of Blacks
         */
       Position(0, 0) -> Rook(PieceColor.Black),
@@ -27,26 +46,7 @@ object GameState {
       Position(4, 1) -> Pawn(PieceColor.Black),
       Position(5, 1) -> Pawn(PieceColor.Black),
       Position(6, 1) -> Pawn(PieceColor.Black),
-      Position(7, 1) -> Pawn(PieceColor.Black),
-      /**
-        * Initial pieces for player of blacks
-        */
-      Position(0, 7) -> Rook(PieceColor.White),
-      Position(1, 7) -> Knight(PieceColor.White),
-      Position(2, 7) -> Bishop(PieceColor.White),
-      Position(3, 7) -> Queen(PieceColor.White),
-      Position(4, 7) -> King(PieceColor.White),
-      Position(5, 7) -> Bishop(PieceColor.White),
-      Position(6, 7) -> Knight(PieceColor.White),
-      Position(7, 7) -> Rook(PieceColor.White),
-      Position(0, 6) -> Pawn(PieceColor.White),
-      Position(1, 6) -> Pawn(PieceColor.White),
-      Position(2, 6) -> Pawn(PieceColor.White),
-      Position(3, 6) -> Pawn(PieceColor.White),
-      Position(4, 6) -> Pawn(PieceColor.White),
-      Position(5, 6) -> Pawn(PieceColor.White),
-      Position(6, 6) -> Pawn(PieceColor.White),
-      Position(7, 6) -> Pawn(PieceColor.White)
+      Position(7, 1) -> Pawn(PieceColor.Black)
     )
 
     GameState(startPieces, movingColor = White)
