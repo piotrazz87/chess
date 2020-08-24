@@ -1,9 +1,9 @@
 package com.chess.domain.piece
 
-import com.chess.domain.Opponent.{Black, Player, White}
+import PieceColor.{Black, Color, White}
 
-case class King(player: Player) extends Piece {
-  val shortName: Player => String = {
+case class King(color: Color) extends Piece {
+  val shortName: Color => String = {
     case White => "K"
     case Black => "k"
   }

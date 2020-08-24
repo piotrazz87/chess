@@ -1,9 +1,10 @@
-package com.chess.model.validator
+package com.chess.service.validator
 
+import com.chess.{MoveNotAllowedByPieceError, TargetPositionHasCollisionInMovePathError, TargetPositionHasPlayersPieceMoveError}
 import com.chess.domain.move.{Move, Position}
-import com.chess.domain.piece.{Pawn, Rook}
-import com.chess.domain.{GameState, Opponent}
-import com.chess.model.{MoveNotAllowedByPieceError, TargetPositionHasCollisionInMovePathError, TargetPositionHasPlayersPieceMoveError}
+import com.chess.domain.piece.{Pawn, PieceColor, Rook}
+import com.chess.domain.GameState
+import com.chess.model.TargetPositionHasCollisionInMovePathError
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -15,7 +16,7 @@ class PieceMoveValidatorTest extends AnyWordSpec with Matchers with GivenWhenThe
 
   "PieceMoveValidator" when {
     "piece on target position" should {
-      val pawn = Pawn(Opponent.White)
+      val pawn = Pawn(PieceColor.White)
       "allow move on empty square" in {
         val movesToEmptySquares =
           Table(
@@ -51,8 +52,8 @@ class PieceMoveValidatorTest extends AnyWordSpec with Matchers with GivenWhenThe
       }
     }
     "piece" should {
-      val pawn = Pawn(Opponent.White)
-      val rook = Rook(Opponent.Black)
+      val pawn = Pawn(PieceColor.White)
+      val rook = Rook(PieceColor.Black)
 
       "piece has ability to move" in {
         val movesToEmptySquares =

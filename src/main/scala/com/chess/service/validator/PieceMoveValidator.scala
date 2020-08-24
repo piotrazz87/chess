@@ -1,14 +1,15 @@
-package com.chess.model.validator
+package com.chess.service.validator
 
-import com.chess.domain.Opponent.Player
+import com.chess.{MoveError, MoveNotAllowedByPieceError, TargetPositionHasCollisionInMovePathError, TargetPositionHasPlayersPieceMoveError}
+import com.chess.domain.piece.PieceColor.Color
 import com.chess.domain.piece._
 import com.chess.domain.move.{Move, Position}
 import com.chess.model._
-import com.chess.model.util.StepDeterminationUtil
+import com.chess.service.util.StepDeterminationUtil
 
 import scala.annotation.tailrec
 
-class PieceMoveValidator extends MoveValidator{
+class PieceMoveValidator extends MoveValidator {
 
   def validate(move: Move, piece: Piece, boardPieces: Map[Position, Piece]): Either[MoveError, Unit] =
     for {
@@ -24,7 +25,7 @@ class PieceMoveValidator extends MoveValidator{
   ): Either[MoveError, Unit] =
     Either.cond(
       !boardPieces
-        .exists { case (pos, posPiece) => pos == move.target && posPiece.player == piece.player },
+        .exists { case (pos, posPiece) => pos == move.target && posPiece.color == piece.color },
       (),
       TargetPositionHasPlayersPieceMoveError(move, piece)
     )
@@ -43,9 +44,9 @@ class PieceMoveValidator extends MoveValidator{
           case Knight(_) => move.isKnightMove
           case Rook(_)   => move.isLinearMove
           case Pawn(_) =>
-            val canMoveTwoSteps = move.start.y == Pawn.InitialPositions(movingPiece.player) && move.isTwoStepUpDownMove
+            val canMoveTwoSteps = move.start.y == Pawn.InitialPositions(movingPiece.color) && move.isTwoStepUpDownMove
             val canMoveDiagonalForEliminatingOpponent =
-              move.isDiagonalMove && move.isOneStepMove && opponentPieceExists(move, movingPiece.player, boardPieces)
+              move.isDiagonalMove && move.isOneStepMove && opponentPieceExists(move, movingPiece.color, boardPieces)
 
             (move.isLinearMove && (move.isOneStepMove || canMoveTwoSteps)) || canMoveDiagonalForEliminatingOpponent
         }),
@@ -72,12 +73,12 @@ class PieceMoveValidator extends MoveValidator{
 
     piece match {
       case _ @Knight(_) => Right(())
-      case _            => moveStepByStep(Move(move.start,step.makeStep(move.start)))
+      case _            => moveStepByStep(Move(move.start, step.makeStep(move.start)))
     }
   }
 
-  private def opponentPieceExists(move: Move, movingPlayer: Player, boardPieces: Map[Position, Piece]) =
-    boardPieces.exists { case (pos, piece) => pos == move.target && movingPlayer != piece.player }
+  private def opponentPieceExists(move: Move, movingColor: Color, boardPieces: Map[Position, Piece]) =
+    boardPieces.exists { case (pos, piece) => pos == move.target && movingColor != piece.color }
 
   private def hasMoveChange(move: Move): Boolean = move.start != move.target
 }

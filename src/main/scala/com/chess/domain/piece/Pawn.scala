@@ -1,16 +1,16 @@
 package com.chess.domain.piece
 
-import com.chess.domain.Opponent.{Black, Player, White}
+import PieceColor.{Black, Color, White}
 
-case class Pawn(player: Player) extends Piece {
-  val shortName: Player => String = {
+case class Pawn(color: Color) extends Piece {
+  val shortName: Color => String = {
     case White => "P"
     case Black => "p"
   }
 }
 
 object Pawn {
-  val InitialPositions: Player => Int = {
+  val InitialPositions: Color => Int = {
     case White => 6
     case Black => 1
   }

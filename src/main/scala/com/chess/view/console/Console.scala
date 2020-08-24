@@ -1,4 +1,4 @@
-package com.chess.model.console
+package com.chess.view.console
 
 import cats.effect.Sync
 

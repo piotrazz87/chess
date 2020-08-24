@@ -1,4 +1,4 @@
-package com.chess.model
+package com.chess
 
 import com.chess.domain.move.{Move, Position}
 import com.chess.domain.piece.Piece

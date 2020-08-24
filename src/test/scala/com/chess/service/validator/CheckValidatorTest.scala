@@ -1,10 +1,11 @@
-package com.chess.model.validator
+package com.chess.service.validator
 
 import cats.syntax.either._
+import com.chess.{CheckOnKingError, MoveError, TargetPositionHasPlayersPieceMoveError}
 import com.chess.domain.move.{Move, Position}
-import com.chess.domain.piece.{King, Pawn, Piece, Queen}
-import com.chess.domain.{GameState, Opponent}
-import com.chess.model.{CheckOnKingError, MoveError, TargetPositionHasPlayersPieceMoveError}
+import com.chess.domain.piece.{King, Pawn, Piece, PieceColor, Queen}
+import com.chess.domain.GameState
+import com.chess.model.TargetPositionHasPlayersPieceMoveError
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -17,22 +18,22 @@ class CheckValidatorTest extends AnyWordSpec with Matchers with GivenWhenThen {
       val gameState = GameState.initialize
 
       "no check on move" in {
-        checkValidator.validateKingMovingOnCheck(Pawn(Opponent.White))(gameState) shouldBe ().asRight
+        checkValidator.validateKingMovingOnCheck(Pawn(PieceColor.White))(gameState) shouldBe ().asRight
       }
       "king moving on check" in {
-        implicit val state: GameState = gameState.copy(checkOnPlayer = Some(Opponent.White))
-        checkValidator.validateKingMovingOnCheck(King(Opponent.White))(gameState) shouldBe ().asRight
+        implicit val state: GameState = gameState.copy(checkOnColor = Some(PieceColor.White))
+        checkValidator.validateKingMovingOnCheck(King(PieceColor.White))(gameState) shouldBe ().asRight
       }
       "other piece moving on check" in {
-        implicit val state: GameState = gameState.copy(checkOnPlayer = Some(Opponent.White))
-        checkValidator.validateKingMovingOnCheck(Queen(Opponent.White)) shouldBe CheckOnKingError.asLeft
+        implicit val state: GameState = gameState.copy(checkOnColor = Some(PieceColor.White))
+        checkValidator.validateKingMovingOnCheck(Queen(PieceColor.White)) shouldBe CheckOnKingError.asLeft
       }
       "validateIfMoveCausedCurrentPlayerCheck" should {
         "noCheck" in {
           val moveValidator = SuccessValidator
           val checkValidator = new CheckValidator(moveValidator)
           val pieces=GameState.initialize.pieces
-          checkValidator.validateIfMoveCausedCurrentPlayerCheck(pieces,Opponent.White) shouldBe CheckOnKingError.asLeft
+          checkValidator.validateIfMoveCausedCurrentPlayerCheck(pieces,PieceColor.White) shouldBe CheckOnKingError.asLeft
         }
         "check" in {
           val moveValidator = FailureValidator

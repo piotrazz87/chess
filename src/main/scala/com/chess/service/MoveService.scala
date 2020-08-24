@@ -1,10 +1,11 @@
-package com.chess.model.service
+package com.chess.service
 
+import com.chess.{MoveError, NoPieceToMoveFromThisPosition}
 import com.chess.domain.move.{Move, Position}
 import com.chess.domain.piece.Piece
 import com.chess.domain.GameState
 import com.chess.model._
-import com.chess.model.validator.{CheckValidator, MoveValidator}
+import com.chess.service.validator.{CheckValidator, MoveValidator}
 
 class MoveService(moveValidator: MoveValidator, checkValidator: CheckValidator) {
 
@@ -23,10 +24,10 @@ class MoveService(moveValidator: MoveValidator, checkValidator: CheckValidator) 
       implicit gameState: GameState
   ): Either[MoveError, GameState] = {
     val newPieces = gameState.pieces.filterNot { case (piece, _) => piece == move.start } + (move.target -> movingPiece)
-    val nextPlayer = movingPiece.player.opposite
+    val nextPlayer = movingPiece.color.opposite
     for {
-      _ <- checkValidator.validateIfMoveCausedCurrentPlayerCheck(newPieces, gameState.movingPlayer)
-      isCheckOnNextPlayer = checkValidator.isCheckOnNextPlayer(newPieces, gameState.movingPlayer)
+      _ <- checkValidator.validateIfMoveCausedCurrentPlayerCheck(newPieces, gameState.movingColor)
+      isCheckOnNextPlayer = checkValidator.isCheckOnNextPlayer(newPieces, gameState.movingColor)
     } yield GameState(newPieces, Option.when(isCheckOnNextPlayer)(nextPlayer), nextPlayer)
   }
 }

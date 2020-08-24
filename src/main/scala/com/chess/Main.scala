@@ -2,7 +2,7 @@ package com.chess
 
 import cats.effect.{ExitCode, IO, IOApp}
 import com.chess.domain.GameState
-import com.chess.model.data.FileName
+import com.chess.service.data.FileName
 import com.chess.module.ChessModule
 import com.typesafe.scalalogging.LazyLogging
 

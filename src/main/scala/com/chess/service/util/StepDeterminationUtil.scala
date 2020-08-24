@@ -1,4 +1,4 @@
-package com.chess.model.util
+package com.chess.service.util
 
 import com.chess.domain.move.{Move, Step}
 import com.chess.domain.move.Step.Step

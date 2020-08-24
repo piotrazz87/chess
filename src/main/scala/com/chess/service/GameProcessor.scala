@@ -1,13 +1,13 @@
-package com.chess.model.service
+package com.chess.service
 
 import cats.data.EitherT
 import cats.effect.{IO, Sync}
 import cats.implicits.catsSyntaxEitherId
 import com.chess.domain.GameState
-import com.chess.model.MoveError
 import com.whitehatgaming.UserInputFile
 import cats.implicits._
-import com.chess.model.console.ChessBoardConsoleDrawer
+import com.chess.MoveError
+import com.chess.view.console.ChessBoardConsoleDrawer
 
 class GameProcessor[F[_]: Sync](moveService: MoveService, boardDrawer: ChessBoardConsoleDrawer[F]) {
 

@@ -1,4 +1,4 @@
-package com.chess.model.data
+package com.chess.service.data
 
 import cats.effect.Sync
 import cats.implicits._

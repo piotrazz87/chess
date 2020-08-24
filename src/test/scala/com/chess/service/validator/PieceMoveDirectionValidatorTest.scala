@@ -1,9 +1,8 @@
-package com.chess.model.validator
+package com.chess.service.validator
 
+import com.chess.MoveNotAllowedByPieceError
 import com.chess.domain.move.{Move, Position}
-import com.chess.domain.piece._
-import com.chess.domain.Opponent
-import com.chess.model.MoveNotAllowedByPieceError
+import com.chess.domain.piece.{PieceColor, _}
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -18,7 +17,7 @@ class PieceMoveDirectionValidatorTest
 
   "PieceMoveValidator" when {
     "king" should {
-      val king = King(Opponent.White)
+      val king = King(PieceColor.White)
       val correctMoves =
         Table(
           ("positionFrom", "positionTo"),
@@ -54,7 +53,7 @@ class PieceMoveDirectionValidatorTest
       }
     }
     "queen" should {
-      val queen = Queen(Opponent.White)
+      val queen = Queen(PieceColor.White)
       val correctMoves =
         Table(
           ("positionFrom", "positionTo"),
@@ -86,7 +85,7 @@ class PieceMoveDirectionValidatorTest
       }
     }
     "bishop" should {
-      val bishop = Bishop(Opponent.White)
+      val bishop = Bishop(PieceColor.White)
       val correctMoves =
         Table(
           ("positionFrom", "positionTo"),
@@ -120,7 +119,7 @@ class PieceMoveDirectionValidatorTest
       }
     }
     "knight" should {
-      val knight = Knight(Opponent.White)
+      val knight = Knight(PieceColor.White)
       val correctMoves =
         Table(
           ("positionFrom", "positionTo"),
@@ -154,7 +153,7 @@ class PieceMoveDirectionValidatorTest
       }
     }
     "rook" should {
-      val rook = Rook(Opponent.White)
+      val rook = Rook(PieceColor.White)
       val correctMoves =
         Table(
           ("positionFrom", "positionTo"),
@@ -188,7 +187,7 @@ class PieceMoveDirectionValidatorTest
       }
     }
     "pawn" should {
-      val pawn = Pawn(Opponent.Black)
+      val pawn = Pawn(PieceColor.Black)
       val correctMoves =
         Table(
           ("positionFrom", "positionTo"),
@@ -207,12 +206,12 @@ class PieceMoveDirectionValidatorTest
         )
       "allow moves" in {
         forAll(correctMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), pawn, Map(Position(7, 2) -> Pawn(Opponent.White))) shouldBe Right()
+          validator.validateIfPieceCanMakeMove(Move(from, to), pawn, Map(Position(7, 2) -> Pawn(PieceColor.White))) shouldBe Right()
         }
       }
       "disallow moves" in {
         forAll(forbiddenMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), pawn, Map(Position(7, 2) -> Pawn(Opponent.Black))) shouldBe Left(
+          validator.validateIfPieceCanMakeMove(Move(from, to), pawn, Map(Position(7, 2) -> Pawn(PieceColor.Black))) shouldBe Left(
             MoveNotAllowedByPieceError(Move(from, to), pawn)
           )
         }

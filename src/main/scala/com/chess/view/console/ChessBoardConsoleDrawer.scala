@@ -1,15 +1,11 @@
-package com.chess.model.console
+package com.chess.view.console
 
 import cats.effect.Sync
 import cats.implicits._
-import com.chess.BoardSize
+import com.chess.view.ChessBoardDrawer
 import com.chess.domain.move.Position
 import com.chess.domain.piece.Piece
-import com.chess.model.console.ChessBoardConsoleDrawer.{lineSeparator, verticalBoardLabel}
-
-trait ChessBoardDrawer[F[_]] {
-  def drawBoard(pieces: Map[Position, Piece]): F[Unit]
-}
+import com.chess.view.console.ChessBoardConsoleDrawer.{lineSeparator, verticalBoardLabel}
 
 class ChessBoardConsoleDrawer[F[_]: Sync] private (board: Array[Array[Int]], console: Console[F])
     extends ChessBoardDrawer[F] {
@@ -42,6 +38,7 @@ object ChessBoardConsoleDrawer {
   def apply[F[_]: Sync](console: Console[F]) =
     new ChessBoardConsoleDrawer[F](Array.ofDim[Int](BoardSize, BoardSize), console)
 
+  private val BoardSize = 8
   private val rowSeparator = "|"
   private val verticalBoardLabel = ('a' to 'h').mkString("    ", "   ", "")
   private val horizontalBoardLabel = 1 to BoardSize

@@ -1,9 +1,9 @@
-package com.chess.model.validator
+package com.chess.service.validator
 
+import com.chess.TargetPositionHasCollisionInMovePathError
 import com.chess.domain.move.{Move, Position}
-import com.chess.domain.{GameState, Opponent}
-import com.chess.domain.piece.{Knight, Piece, Queen}
-import com.chess.model.TargetPositionHasCollisionInMovePathError
+import com.chess.domain.GameState
+import com.chess.domain.piece.{Knight, Piece, PieceColor, Queen}
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -15,7 +15,7 @@ class MoveCollisionValidatorTest extends AnyWordSpec with Matchers with GivenWhe
 
   "PieceMoveValidator" when {
     "knight" should {
-      val king = Knight(Opponent.White)
+      val king = Knight(PieceColor.White)
       val correctMoves =
         Table(
           ("positionFrom", "positionTo"),
@@ -33,7 +33,7 @@ class MoveCollisionValidatorTest extends AnyWordSpec with Matchers with GivenWhe
       }
     }
     "piece" should {
-      val queen = Queen(Opponent.White)
+      val queen = Queen(PieceColor.White)
       val moves =
         Table(
           ("positionFrom", "positionTo"),
