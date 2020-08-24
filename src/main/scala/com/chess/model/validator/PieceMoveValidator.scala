@@ -1,19 +1,33 @@
 package com.chess.model.validator
 
+import com.chess.domain.Opponent.Player
 import com.chess.domain.piece._
-import com.chess.domain.{Move, Position}
-import com.chess.model.Step.determineStepType
-import com.chess.model.{MoveError, MoveNotAllowedByPieceError, TargetPositionHasCollisionInMovePathError}
+import com.chess.domain.move.{Move, Position}
+import com.chess.model._
+import com.chess.model.util.StepDeterminationUtil
 
 import scala.annotation.tailrec
 
-class PieceMoveValidator {
+class PieceMoveValidator extends MoveValidator{
 
   def validate(move: Move, piece: Piece, boardPieces: Map[Position, Piece]): Either[MoveError, Unit] =
     for {
+      _ <- validateTargetPosition(move, piece, boardPieces)
       _ <- validateIfPieceCanMakeMove(move, piece, boardPieces)
       _ <- validateIfMoveHasCollisionWithOtherPieces(move, piece, boardPieces)
     } yield ()
+
+  private[validator] def validateTargetPosition(
+      move: Move,
+      piece: Piece,
+      boardPieces: Map[Position, Piece]
+  ): Either[MoveError, Unit] =
+    Either.cond(
+      !boardPieces
+        .exists { case (pos, posPiece) => pos == move.target && posPiece.player == piece.player },
+      (),
+      TargetPositionHasPlayersPieceMoveError(move, piece)
+    )
 
   private[validator] def validateIfPieceCanMakeMove(
       move: Move,
@@ -21,7 +35,7 @@ class PieceMoveValidator {
       boardPieces: Map[Position, Piece]
   ): Either[MoveError, Unit] =
     Either.cond(
-      move.from != move.to &&
+      hasMoveChange(move) &&
         (movingPiece match {
           case King(_)   => (move.isDiagonalMove || move.isLinearMove) && move.isOneStepMove
           case Queen(_)  => move.isLinearMove || move.isDiagonalMove
@@ -29,12 +43,11 @@ class PieceMoveValidator {
           case Knight(_) => move.isKnightMove
           case Rook(_)   => move.isLinearMove
           case Pawn(_) =>
-            (move.isLinearMove &&
-              (move.isOneStepMove || (move.from.y == Pawn
-                .InitialPositions(movingPiece.player) && move.isTwoStepUpDownMove))) ||
-              move.isDiagonalMove && move.isOneStepMove && boardPieces.exists {
-                case (pos, piece) => pos == move.to && movingPiece.player != piece.player
-              }
+            val canMoveTwoSteps = move.start.y == Pawn.InitialPositions(movingPiece.player) && move.isTwoStepUpDownMove
+            val canMoveDiagonalForEliminatingOpponent =
+              move.isDiagonalMove && move.isOneStepMove && opponentPieceExists(move, movingPiece.player, boardPieces)
+
+            (move.isLinearMove && (move.isOneStepMove || canMoveTwoSteps)) || canMoveDiagonalForEliminatingOpponent
         }),
       (),
       MoveNotAllowedByPieceError(move, movingPiece)
@@ -45,21 +58,26 @@ class PieceMoveValidator {
       piece: Piece,
       boardPieces: Map[Position, Piece]
   ): Either[MoveError, Unit] = {
-    val step = determineStepType(move)
+    val step = StepDeterminationUtil.fromMove(move)
 
     @tailrec
-    def moveStepByStep(move: Move): Either[MoveError, Unit] =
-      if (move.from == move.to) {
+    def moveStepByStep(stepMove: Move): Either[MoveError, Unit] =
+      if (stepMove.start == move.target) {
         Right(())
       } else {
-        if (boardPieces.exists { case (pos, _) => pos == move.from }) {
-          Left(TargetPositionHasCollisionInMovePathError(move, piece))
-        } else moveStepByStep(Move(step.makeStep(move.from), move.to))
+        if (boardPieces.exists { case (pos, _) => pos == stepMove.target }) {
+          Left(TargetPositionHasCollisionInMovePathError(stepMove, piece))
+        } else moveStepByStep(Move(step.makeStep(stepMove.start), stepMove.target))
       }
 
     piece match {
       case _ @Knight(_) => Right(())
-      case _            => moveStepByStep(move)
+      case _            => moveStepByStep(Move(move.start,step.makeStep(move.start)))
     }
   }
+
+  private def opponentPieceExists(move: Move, movingPlayer: Player, boardPieces: Map[Position, Piece]) =
+    boardPieces.exists { case (pos, piece) => pos == move.target && movingPlayer != piece.player }
+
+  private def hasMoveChange(move: Move): Boolean = move.start != move.target
 }

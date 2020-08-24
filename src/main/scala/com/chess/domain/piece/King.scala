@@ -1,6 +1,5 @@
 package com.chess.domain.piece
 
-import com.chess.domain.Move
 import com.chess.domain.Opponent.{Black, Player, White}
 
 case class King(player: Player) extends Piece {
@@ -8,6 +7,4 @@ case class King(player: Player) extends Piece {
     case White => "K"
     case Black => "k"
   }
-
-  override def canMakeMove(move: Move): Boolean = (move.isDiagonalMove || move.isLinearMove) && move.isOneStepMove
 }

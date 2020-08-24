@@ -1,8 +1,8 @@
-package com.chess.model
+package com.chess.domain
 
 import com.chess.domain.Opponent.{Player, White}
+import com.chess.domain.move.Position
 import com.chess.domain.piece._
-import com.chess.domain.{Move, Opponent, Position}
 
 case class GameState private (
     pieces: Map[Position, Piece],

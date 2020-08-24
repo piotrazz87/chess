@@ -1,39 +1,51 @@
-package com.chess.model.service
+package com.chess.model.validator
 
 import com.chess.domain.Opponent.Player
+import com.chess.domain.move.{Move, Position}
 import com.chess.domain.piece.{King, Piece}
-import com.chess.domain.{Move, Position}
-import com.chess.model.validator.PieceMoveValidator
-import com.chess.model.{MoveCausedOwnCheckError, MoveError}
+import com.chess.domain.GameState
+import com.chess.model.{CheckOnKingError, MoveCausedOwnCheckError, MoveError}
 
-class CheckService(moveValidator: PieceMoveValidator) {
+class CheckValidator(moveValidator: MoveValidator) {
+
+  def validateKingMovingOnCheck(
+      piece: Piece
+  )(implicit gameState: GameState): Either[MoveError, Unit] =
+    gameState.checkOnPlayer
+      .map { checkedPlayer =>
+        piece match {
+          case King(_) => Right(())
+          case _       => Either.cond(checkedPlayer != piece.player, (), CheckOnKingError)
+        }
+      }
+      .getOrElse(Right())
 
   def validateIfMoveCausedCurrentPlayerCheck(
       boardPieces: Map[Position, Piece],
       movingPlayer: Player
   ): Either[MoveError, Unit] =
-    Either.cond(isCurrentPlayerCheck(boardPieces, movingPlayer), (), MoveCausedOwnCheckError)
+    Either.cond(!isCurrentPlayerCheck(boardPieces, movingPlayer), (), MoveCausedOwnCheckError)
 
   def isCheckOnNextPlayer(boardPieces: Map[Position, Piece], movingPlayer: Player): Boolean =
-    isCheck(_ == movingPlayer)(boardPieces)
-
-  private def isCurrentPlayerCheck(boardPieces: Map[Position, Piece], movingPlayer: Player): Boolean =
     isCheck(_ != movingPlayer)(boardPieces)
 
+  private def isCurrentPlayerCheck(boardPieces: Map[Position, Piece], movingPlayer: Player): Boolean =
+    isCheck(_ == movingPlayer)(boardPieces)
+
   private def isCheck(p: Player => Boolean)(boardPieces: Map[Position, Piece]): Boolean = {
-    val oppositePieces = boardPieces.filter { case (_, piece) => p(piece.player) }
+    val oppositePieces = boardPieces.filterNot { case (_, piece) => p(piece.player) }
     val currentKing = getKingFor(p, boardPieces)
 
     isCheckOn(currentKing, oppositePieces)
   }
 
   //TODO:remove exception
-  private def getKingFor(currentPlayer: Player => Boolean, boardPieces: Map[Position, Piece]) =
+  private def getKingFor(isCurrentPlayer: Player => Boolean, boardPieces: Map[Position, Piece]) =
     boardPieces
       .collect {
         case (position, piece: King) => (piece.player, position)
       }
-      .find { case (player, _) => currentPlayer(player) }
+      .find { case (player, _) => isCurrentPlayer(player) }
       .map { case (_, kingPosition) => kingPosition }
       .getOrElse(throw new RuntimeException("King has escaped!"))
 

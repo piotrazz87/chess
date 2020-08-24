@@ -1,6 +1,5 @@
 package com.chess.domain.piece
 
-import com.chess.domain.Move
 import com.chess.domain.Opponent.{Black, Player, White}
 
 case class Pawn(player: Player) extends Piece {
@@ -8,13 +7,11 @@ case class Pawn(player: Player) extends Piece {
     case White => "P"
     case Black => "p"
   }
-
-  override def canMakeMove(move: Move): Boolean = true
 }
 
 object Pawn {
   val InitialPositions: Player => Int = {
-    case White => 1
-    case Black => 6
+    case White => 6
+    case Black => 1
   }
 }

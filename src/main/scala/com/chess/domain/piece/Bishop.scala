@@ -1,5 +1,4 @@
 package com.chess.domain.piece
-import com.chess.domain.Move
 import com.chess.domain.Opponent.{Black, Player, White}
 
 case class Bishop(player: Player) extends Piece {
@@ -7,6 +6,4 @@ case class Bishop(player: Player) extends Piece {
     case White => "B"
     case Black => "b"
   }
-
-  override def canMakeMove(move: Move): Boolean = move.isDiagonalMove
 }

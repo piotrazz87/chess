@@ -1,24 +1,26 @@
 package com.chess
 
-import com.chess.domain.{ChessBoard, Move, Position}
-import com.chess.model.GameState
-import com.chess.model.service.{CheckService, ChessmanService}
-import com.chess.model.validator.PieceMoveValidator
+import cats.effect.{ExitCode, IO, IOApp}
+import com.chess.domain.GameState
+import com.chess.model.data.FileName
+import com.chess.module.ChessModule
+import com.typesafe.scalalogging.LazyLogging
 
-object Main extends App {
+object Main extends IOApp with LazyLogging {
 
-  val board = ChessBoard()
-  implicit val state = GameState.initialize
-
-  val moveValidator = new PieceMoveValidator()
-  val service = new ChessmanService(moveValidator, new CheckService(moveValidator))
-
-  board.draw(state.pieces)
-  service.makeMove(Move(Position(3, 0), Position(0, 3))) match {
-    case Left(value)  => print(value.message)
-    case Right(value) => board.draw(value.pieces)
+  override def run(args: List[String]): IO[ExitCode] = {
+    val module = ChessModule[IO]()
+    implicit val state: GameState = GameState.initialize
+    for {
+      _ <- module.console.putStrLn("Provide file for chess game")
+      fileName <- module.console.getStrLn
+      _ <- module.boardDrawer.drawBoard(state.pieces)
+      userFile <- module.movesProvider.provide(FileName(fileName))
+      value = module.gameProcessor.makeGameFromFile(userFile).unsafeRunSync()
+      v = value match {
+        case Left(value) => module.console.putStrLn(value.message).unsafeRunSync()
+        case _           => ()
+      }
+    } yield ExitCode.Success
   }
-  // val file = new UserInputFile("sample-moves.txt")
-  // val nextMove: Move = Move.fromFileFormat(file.nextMove())
-
 }
