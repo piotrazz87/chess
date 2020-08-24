@@ -1,9 +1,9 @@
 package com.chess.service.validator
 
 import com.chess.TargetPositionHasCollisionInMovePathError
-import com.chess.domain.move.{Move, Position}
-import com.chess.domain.GameState
-import com.chess.domain.piece.{Knight, Piece, PieceColor, Queen}
+import com.chess.model.move.{Move, Position}
+import com.chess.model.GameState
+import com.chess.model.piece.{Knight, Piece, PieceColor, Queen}
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks

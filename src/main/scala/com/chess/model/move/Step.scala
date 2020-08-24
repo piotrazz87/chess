@@ -1,4 +1,4 @@
-package com.chess.domain.move
+package com.chess.model.move
 
 object Step {
   sealed trait Step {

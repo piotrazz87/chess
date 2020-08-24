@@ -1,14 +1,10 @@
-package com.chess.domain
+package com.chess.model
 
-import com.chess.domain.piece.PieceColor.{Color, White}
-import com.chess.domain.move.Position
-import com.chess.domain.piece._
+import com.chess.model.piece.PieceColor.{Color, White}
+import com.chess.model.move.Position
+import com.chess.model.piece._
 
-case class GameState private (
-    pieces: Map[Position, Piece],
-    checkOnColor: Option[Color] = None,
-    movingColor: Color
-)
+case class GameState private (pieces: Map[Position, Piece], checkOnColor: Option[Color] = None, movingColor: Color)
 
 object GameState {
   def initialize: GameState = {

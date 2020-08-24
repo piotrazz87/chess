@@ -1,7 +1,7 @@
-package com.chess.domain.piece
+package com.chess.model.piece
 
 import PieceColor.{Black, Color, White}
-import com.chess.domain.move.Move
+import com.chess.model.move.Move
 
 case class Queen(color: Color) extends Piece {
   val shortName: Color => String = {

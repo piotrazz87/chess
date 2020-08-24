@@ -1,7 +1,7 @@
 package com.chess.service.util
 
-import com.chess.domain.move.{Move, Step}
-import com.chess.domain.move.Step.Step
+import com.chess.model.move.{Move, Step}
+import com.chess.model.move.Step.Step
 
 object StepDeterminationUtil {
   //TODO:refactor it

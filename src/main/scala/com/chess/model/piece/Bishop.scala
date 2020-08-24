@@ -1,4 +1,4 @@
-package com.chess.domain.piece
+package com.chess.model.piece
 import PieceColor.{Black, Color, White}
 
 case class Bishop(color: Color) extends Piece {

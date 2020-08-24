@@ -1,7 +1,7 @@
 package com.chess
 
-import com.chess.domain.move.{Move, Position}
-import com.chess.domain.piece.Piece
+import com.chess.model.move.{Move, Position}
+import com.chess.model.piece.Piece
 
 sealed trait MoveError {
   def message: String

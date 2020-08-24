@@ -1,9 +1,9 @@
 package com.chess.service.validator
 
 import com.chess.{MoveError, MoveNotAllowedByPieceError, TargetPositionHasCollisionInMovePathError, TargetPositionHasPlayersPieceMoveError}
-import com.chess.domain.piece.PieceColor.Color
-import com.chess.domain.piece._
-import com.chess.domain.move.{Move, Position}
+import com.chess.model.piece.PieceColor.Color
+import com.chess.model.piece._
+import com.chess.model.move.{Move, Position}
 import com.chess.model._
 import com.chess.service.util.StepDeterminationUtil
 

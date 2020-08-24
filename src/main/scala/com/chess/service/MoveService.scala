@@ -1,9 +1,9 @@
 package com.chess.service
 
 import com.chess.{MoveError, NoPieceToMoveFromThisPosition}
-import com.chess.domain.move.{Move, Position}
-import com.chess.domain.piece.Piece
-import com.chess.domain.GameState
+import com.chess.model.move.{Move, Position}
+import com.chess.model.piece.Piece
+import com.chess.model.GameState
 import com.chess.model._
 import com.chess.service.validator.{CheckValidator, MoveValidator}
 

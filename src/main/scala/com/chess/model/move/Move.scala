@@ -1,4 +1,4 @@
-package com.chess.domain.move
+package com.chess.model.move
 
 case class Move(start: Position, target: Position) {
   def isDiagonalMove: Boolean = Math.abs(start.x - target.x) - Math.abs(start.y - target.y) == 0

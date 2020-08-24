@@ -1,8 +1,8 @@
 package com.chess.service.validator
 
 import com.chess.MoveNotAllowedByPieceError
-import com.chess.domain.move.{Move, Position}
-import com.chess.domain.piece.{PieceColor, _}
+import com.chess.model.move.{Move, Position}
+import com.chess.model.piece.{PieceColor, _}
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks

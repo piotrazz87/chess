@@ -2,9 +2,9 @@ package com.chess.service.validator
 
 import cats.syntax.either._
 import com.chess.{CheckOnKingError, MoveError, TargetPositionHasPlayersPieceMoveError}
-import com.chess.domain.move.{Move, Position}
-import com.chess.domain.piece.{King, Pawn, Piece, PieceColor, Queen}
-import com.chess.domain.GameState
+import com.chess.model.move.{Move, Position}
+import com.chess.model.piece.{King, Pawn, Piece, PieceColor, Queen}
+import com.chess.model.GameState
 import com.chess.model.TargetPositionHasPlayersPieceMoveError
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers

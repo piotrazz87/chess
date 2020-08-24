@@ -3,8 +3,8 @@ package com.chess.view.console
 import cats.effect.Sync
 import cats.implicits._
 import com.chess.view.ChessBoardDrawer
-import com.chess.domain.move.Position
-import com.chess.domain.piece.Piece
+import com.chess.model.move.Position
+import com.chess.model.piece.Piece
 import com.chess.view.console.ChessBoardConsoleDrawer.{lineSeparator, verticalBoardLabel}
 
 class ChessBoardConsoleDrawer[F[_]: Sync] private (board: Array[Array[Int]], console: Console[F])

@@ -1,4 +1,4 @@
-package com.chess.domain.piece
+package com.chess.model.piece
 
 object PieceColor {
   sealed trait Color {

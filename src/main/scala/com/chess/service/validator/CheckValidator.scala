@@ -1,10 +1,10 @@
 package com.chess.service.validator
 
 import com.chess.{CheckOnKingError, MoveCausedOwnCheckError, MoveError}
-import com.chess.domain.piece.PieceColor.Color
-import com.chess.domain.move.{Move, Position}
-import com.chess.domain.piece.{King, Piece}
-import com.chess.domain.GameState
+import com.chess.model.piece.PieceColor.Color
+import com.chess.model.move.{Move, Position}
+import com.chess.model.piece.{King, Piece}
+import com.chess.model.GameState
 import com.chess.model.MoveCausedOwnCheckError
 
 class CheckValidator(moveValidator: MoveValidator) {
