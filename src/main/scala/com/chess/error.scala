@@ -1,5 +1,7 @@
 package com.chess
 
+import cats.implicits._
+
 import com.chess.model.move.{Move, Position}
 import com.chess.model.piece.Piece
 
@@ -13,22 +15,19 @@ object CheckOnKingError extends MoveError {
 object MoveCausedOwnCheckError extends MoveError {
   override def message: String = "Your move caused check on your king!"
 }
-case class NoPieceToMoveFromThisPosition(position: Position) extends MoveError {
-  override def message: String = s"There is no piece to move at position ${position.x} ${position.y}"
+case class NoPieceToMoveFromThisPosition(move: Move) extends MoveError {
+  override def message: String = s"There is no piece to move from position.${move.show}"
 }
 case class MoveNotAllowedByPieceError(move: Move, piece: Piece) extends MoveError {
-  override def message: String = s"Move from ${move.from.x} ${move.from.y} isn't allowed for piece ${piece.toString}"
+  override def message: String = s"${move.show} isn't allowed for piece ${piece.show}"
 }
 
 case class TargetPositionHasPlayersPieceMoveError(move: Move, piece: Piece) extends MoveError {
   override def message: String =
-    s"Move to ${move.target.x} ${move.target.y} isn't allowed cause there is piece owned by player."
-}
-
-case class TargetMoveIsSameAsStartingMoveError(from: Position, to: Position, piece: Piece) extends MoveError {
-  override def message: String = s"Move from ${from.x} ${from.y} isn't allowed for piece ${piece.toString}"
+    s"Move to target position isn't allowed cause there is piece owned by player.${move.show}"
 }
 
 case class TargetPositionHasCollisionInMovePathError(move: Move, piece: Piece) extends MoveError {
-  override def message: String = s"Move to ${move.target.x} ${move.target.y} isn't allowed cause there is no path to target."
+  override def message: String =
+    s"Move isn't allowed cause there are other pieces on path to target.${move.show}"
 }

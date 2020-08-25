@@ -23,7 +23,7 @@ class MoveServiceTest extends AnyWordSpec with Matchers with GivenWhenThen {
     "no piece on moving position" when {
       val moveWithNoPiece = Move(Position(5, 5), Position(0, 0))
       "raise move error NoPieceToMoveFromThisPosition" in {
-        moveService.makeMove(moveWithNoPiece) shouldBe NoPieceToMoveFromThisPosition(moveWithNoPiece.from).asLeft
+        moveService.makeMove(moveWithNoPiece) shouldBe NoPieceToMoveFromThisPosition(moveWithNoPiece).asLeft
       }
     }
     "piece on moving position" when {

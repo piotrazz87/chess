@@ -1,20 +1,19 @@
 package com.chess.service.validator
 
 import cats.implicits.catsSyntaxEitherId
+import com.chess.model.GameState
+import com.chess.model.move.{Move, Position}
+import com.chess.model.piece.{Pawn, PieceColor, Rook}
 import com.chess.{
   MoveNotAllowedByPieceError,
   TargetPositionHasCollisionInMovePathError,
   TargetPositionHasPlayersPieceMoveError
 }
-import com.chess.model.move.{Move, Position}
-import com.chess.model.piece.{Pawn, PieceColor, Rook}
-import com.chess.model.GameState
-import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec
 
-class PieceMoveValidatorTest extends AnyWordSpec with Matchers with GivenWhenThen with TableDrivenPropertyChecks {
+class PieceMoveValidatorTest extends AnyWordSpec with Matchers with TableDrivenPropertyChecks {
   private val validator = new PieceMoveValidator
   private val boardPieces = GameState.initialize.pieces
 
@@ -58,7 +57,7 @@ class PieceMoveValidatorTest extends AnyWordSpec with Matchers with GivenWhenThe
       val pawn = Pawn(PieceColor.Black)
       val rook = Rook(PieceColor.White)
 
-      "piece has ability to move" in {
+      "pawn has ability to move" in {
         val movesToEmptySquares =
           Table(
             ("positionFrom", "positionTo"),
@@ -69,7 +68,7 @@ class PieceMoveValidatorTest extends AnyWordSpec with Matchers with GivenWhenThe
           validator.validateTargetPosition(Move(from, to), pawn, boardPieces) shouldBe ().asRight
         }
       }
-      "piece can't move causing target position error" in {
+      "pawn can't move causing target position error" in {
         val movesToCollisionSquares =
           Table(
             ("positionFrom", "positionTo"),
@@ -81,7 +80,7 @@ class PieceMoveValidatorTest extends AnyWordSpec with Matchers with GivenWhenThe
             TargetPositionHasPlayersPieceMoveError(Move(from, to), pawn).asLeft
         }
       }
-      "piece can't move causing move not allowed error" in {
+      "pawn can't move causing move not allowed error" in {
         val movesToCollisionSquares =
           Table(
             ("positionFrom", "positionTo"),
@@ -93,7 +92,7 @@ class PieceMoveValidatorTest extends AnyWordSpec with Matchers with GivenWhenThe
             MoveNotAllowedByPieceError(Move(from, to), pawn).asLeft
         }
       }
-      "piece can't move causing collision error" in {
+      "rook can't move causing collision error" in {
         val movesToCollisionSquares =
           Table(
             ("positionFrom", "positionTo"),

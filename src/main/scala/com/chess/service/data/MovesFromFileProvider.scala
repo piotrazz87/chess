@@ -1,20 +1,14 @@
 package com.chess.service.data
 
-import cats.effect.{Resource, Sync}
-import cats.implicits._
+import cats.effect.IO
 import com.whitehatgaming.UserInputFile
 
-class MovesFromFileProvider[F[_]: Resource] extends MovesProvider[F] {
+class MovesFromFileProvider extends MovesProvider {
 
-  def provide(fileName: FileName): F[UserInputFile] =
-    Resource[F]
-      .apply(new UserInputFile(fileName.name))
-      .handleErrorWith(_ => Resource[F].raiseError(OpeningFileException(fileName)))
+  def provide(fileName: FileName): IO[UserInputFile] =
+    IO(new UserInputFile(fileName.name))
+      .handleErrorWith(ex => IO.raiseError(FileOpeningException(ex.getMessage)))
 }
 
-object MovesFromFileProvider {
-  def apply[F[_]: Resource]() = new MovesFromFileProvider[F]
-}
-
-case class OpeningFileException(fileName: FileName)
-    extends RuntimeException(s"There was a problem while opening file: ${fileName.name}")
+case class FileOpeningException(cause: String)
+    extends RuntimeException(s"There was a problem while opening file: $cause")

@@ -15,7 +15,7 @@ class MoveCollisionValidatorTest extends AnyWordSpec with Matchers with GivenWhe
   private val boardPieces = GameState.initialize.pieces
 
   "PieceMoveValidator" when {
-    "knight" should {
+    "Knight" should {
       val king = Knight(PieceColor.White)
       val correctMoves =
         Table(
@@ -27,13 +27,13 @@ class MoveCollisionValidatorTest extends AnyWordSpec with Matchers with GivenWhe
           (Position(3, 3), Position(4, 5)),
           (Position(3, 3), Position(5, 4))
         )
-      "allow moves" in {
+      "allow moves in all directions" in {
         forAll(correctMoves) { (from, to) =>
           validator.validateIfMoveHasCollisionWithOtherPieces(Move(from, to), king, boardPieces) shouldBe ().asRight
         }
       }
     }
-    "piece" should {
+    "Queen" should {
       val queen = Queen(PieceColor.Black)
       val moves =
         Table(
@@ -42,12 +42,12 @@ class MoveCollisionValidatorTest extends AnyWordSpec with Matchers with GivenWhe
           (Position(3, 0), Position(3, 6))
         )
 
-      "allow moves" in {
+      "allow moves to squares without collision" in {
         forAll(moves) { (from, to) =>
           validator.validateIfMoveHasCollisionWithOtherPieces(Move(from, to), queen, Map.empty[Position, Piece]) shouldBe ().asRight
         }
       }
-      "disallow moves" in {
+      "disallow moves when piece on path to target position" in {
         forAll(moves) { (from, to) =>
           validator.validateIfMoveHasCollisionWithOtherPieces(Move(from, to), queen, boardPieces) shouldBe
             TargetPositionHasCollisionInMovePathError(Move(from, to), queen).asLeft
