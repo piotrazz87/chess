@@ -1,9 +1,8 @@
-package com.chess
+package com.chess.service
 
 import cats.implicits._
-
-import com.chess.model.move.{Move, Position}
-import com.chess.model.piece.Piece
+import com.chess.domain.move.Move
+import com.chess.domain.piece.Piece
 
 sealed trait MoveError {
   def message: String
@@ -12,12 +11,15 @@ sealed trait MoveError {
 object CheckOnKingError extends MoveError {
   override def message: String = "There is a CHECK on you king - you have to escape!"
 }
+
 object MoveCausedOwnCheckError extends MoveError {
   override def message: String = "Your move caused check on your king!"
 }
-case class NoPieceToMoveFromThisPosition(move: Move) extends MoveError {
+
+case class NoPieceToMoveFromThisPositionError(move: Move) extends MoveError {
   override def message: String = s"There is no piece to move from position.${move.show}"
 }
+
 case class MoveNotAllowedByPieceError(move: Move, piece: Piece) extends MoveError {
   override def message: String = s"${move.show} isn't allowed for piece ${piece.show}"
 }

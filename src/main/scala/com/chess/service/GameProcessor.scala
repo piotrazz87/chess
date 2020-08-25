@@ -2,10 +2,9 @@ package com.chess.service
 
 import cats.effect.IO
 import cats.implicits.catsSyntaxEitherId
-import com.chess.MoveError
-import com.chess.model.GameState
-import com.chess.model.move.Move
-import com.chess.service.data.{FileName, MovesProvider}
+import com.chess.domain.GameState
+import com.chess.domain.move.Move
+import com.chess.data.{FileName, MovesProvider}
 import com.chess.view.console.ChessStateConsoleDrawer
 import com.typesafe.scalalogging.LazyLogging
 import com.whitehatgaming.UserInputFile
@@ -19,11 +18,11 @@ class GameProcessor(moveService: MoveService, boardDrawer: ChessStateConsoleDraw
     for {
       userFile <- movesProvider.provide(fileName)
       _ <- boardDrawer.drawBoard(state.pieces)
-      gameResult <- IO(makeNextMove(userFile, state))
+      gameResult <- IO(makeMoves(userFile, state))
     } yield gameResult
   }
 
-  private def makeNextMove(userFile: UserInputFile, state: GameState): Either[MoveError, GameState] = {
+  private def makeMoves(userFile: UserInputFile, state: GameState): Either[MoveError, GameState] = {
     state.checkOnColor.foreach(color => logger.warn(s"There is check on $color"))
     Option(userFile.nextMove()) match {
       case None => state.asRight
@@ -34,7 +33,7 @@ class GameProcessor(moveService: MoveService, boardDrawer: ChessStateConsoleDraw
         for {
           newState <- moveService.makeMove(Move.fromFileFormat(move))(state)
           _ = boardDrawer.drawBoard(newState.pieces).unsafeRunSync()
-          gameResult <- makeNextMove(userFile, newState)
+          gameResult <- makeMoves(userFile, newState)
         } yield gameResult
     }
   }

@@ -1,16 +1,15 @@
 package com.chess.service.validator
 
 import cats.implicits.catsSyntaxEitherId
-import com.chess.TargetPositionHasCollisionInMovePathError
-import com.chess.model.move.{Move, Position}
-import com.chess.model.GameState
-import com.chess.model.piece.{Knight, Piece, PieceColor, Queen}
-import org.scalatest.GivenWhenThen
+import com.chess.domain.GameState
+import com.chess.domain.move.{Move, Position}
+import com.chess.domain.piece.{Knight, Piece, PieceColor, Queen}
+import com.chess.service.TargetPositionHasCollisionInMovePathError
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec
 
-class MoveCollisionValidatorTest extends AnyWordSpec with Matchers with GivenWhenThen with TableDrivenPropertyChecks {
+class MoveCollisionValidatorTest extends AnyWordSpec with Matchers with TableDrivenPropertyChecks {
   private val validator = new PieceMoveValidator
   private val boardPieces = GameState.initialize.pieces
 

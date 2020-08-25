@@ -1,8 +1,8 @@
 package com.chess.view.console
 
 import cats.effect.IO
-import com.chess.model.move.Position
-import com.chess.model.piece.Piece
+import com.chess.domain.move.Position
+import com.chess.domain.piece.Piece
 import com.chess.view.ChessStateDrawer
 import com.chess.view.console.ChessStateConsoleDrawer.{Board, lineSeparator, rowSeparator, verticalBoardLabel}
 

@@ -1,7 +1,7 @@
-package com.chess.module
+package com.chess.config
 
 import cats.effect.IO
-import com.chess.service.data.MovesFromFileProvider
+import com.chess.data.MovesFromFileProvider
 import com.chess.service.validator.{CheckValidator, PieceMoveValidator}
 import com.chess.service.{GameProcessor, MoveService}
 import com.chess.view.console.{ChessStateConsoleDrawer, LiveConsole}
@@ -16,5 +16,6 @@ class ChessModule extends LazyLogging {
   private val checkValidator = new CheckValidator(moveValidator)
   private val service = new MoveService(moveValidator, checkValidator)
   private val movesProvider: MovesFromFileProvider = new MovesFromFileProvider()
+
   val gameProcessor: GameProcessor = new GameProcessor(service, boardDrawer, movesProvider)
 }

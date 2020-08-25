@@ -1,4 +1,4 @@
-package com.chess.service.data
+package com.chess.data
 
 import cats.effect.IO
 import com.whitehatgaming.UserInputFile

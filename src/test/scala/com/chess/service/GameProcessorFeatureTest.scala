@@ -1,24 +1,20 @@
 package com.chess.service
 
-import java.nio.file.Path
-
 import cats.effect.IO
-import com.chess.service.data.{FileName, FileOpeningException, MovesFromFileProvider}
+import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId}
+import com.chess.domain.GameState
+import com.chess.domain.move.{Move, Position}
+import com.chess.domain.piece.PieceColor.Black
+import com.chess.domain.piece._
+import com.chess.data.{FileName, FileOpeningException, MovesFromFileProvider}
 import com.chess.service.validator.{CheckValidator, PieceMoveValidator}
 import com.chess.view.console.{ChessStateConsoleDrawer, LiveConsole}
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.must.Matchers.have
 import org.scalatest.matchers.should.Matchers.{convertToAnyShouldWrapper, the}
-import java.net.URL
-
-import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId}
-import com.chess.MoveNotAllowedByPieceError
-import com.chess.model.GameState
-import com.chess.model.move.{Move, Position}
-import com.chess.model.piece.{Bishop, King, Knight, Pawn, PieceColor, Queen, Rook}
-import com.chess.model.piece.PieceColor.Black
 
 class GameProcessorFeatureTest extends AnyFeatureSpec {
+
   private val console = LiveConsole[IO]
   private val boardDrawer = new ChessStateConsoleDrawer(console)
   private val moveValidator = new PieceMoveValidator()

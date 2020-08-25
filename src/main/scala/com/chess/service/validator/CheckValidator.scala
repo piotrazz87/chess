@@ -1,25 +1,15 @@
 package com.chess.service.validator
 
-import cats.implicits.catsSyntaxEitherId
-import com.chess.{CheckOnKingError, MoveCausedOwnCheckError, MoveError}
-import com.chess.model.piece.PieceColor.Color
-import com.chess.model.move.{Move, Position}
-import com.chess.model.piece.{King, Piece}
-import com.chess.model.GameState
+import com.chess.MoveCausedOwnCheckError
+import com.chess.domain.move.{Move, Position}
+import com.chess.domain.piece.PieceColor.Color
+import com.chess.domain.piece.{King, Piece}
+import com.chess.config.MoveCausedOwnCheckError
+import com.chess.service.{MoveCausedOwnCheckError, MoveError}
 
 class CheckValidator(moveValidator: MoveValidator) {
 
-  def validateKingMovingOnCheck(piece: Piece)(implicit gameState: GameState): Either[MoveError, Unit] =
-    gameState.checkOnColor
-      .map { checkedColor =>
-        piece match {
-          case King(_) => ().asRight
-          case _       => Either.cond(checkedColor != piece.color, (), CheckOnKingError)
-        }
-      }
-      .getOrElse(().asRight)
-
-  def validateIfMoveCausedCurrentPlayerCheck(
+  def validateIfIsCurrentPlayerCheck(
       boardPieces: Map[Position, Piece],
       movingColor: Color
   ): Either[MoveError, Unit] =

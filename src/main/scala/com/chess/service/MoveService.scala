@@ -1,18 +1,18 @@
 package com.chess.service
 
 import cats.implicits.catsSyntaxEitherId
-import com.chess.model.GameState
-import com.chess.model.move.{Move, Position}
-import com.chess.model.piece.Piece
+import com.chess.NoPieceToMoveFromThisPositionError
+import com.chess.domain.GameState
+import com.chess.domain.move.Move
+import com.chess.domain.piece.Piece
 import com.chess.service.validator.{CheckValidator, MoveValidator}
-import com.chess.{MoveError, NoPieceToMoveFromThisPosition}
+import com.chess.config.NoPieceToMoveFromThisPositionError
 
 class MoveService(moveValidator: MoveValidator, checkValidator: CheckValidator) {
 
   def makeMove(move: Move)(implicit gameState: GameState): Either[MoveError, GameState] =
     for {
       movingPiece <- getMovingPiece(move)
-      _ <- checkValidator.validateKingMovingOnCheck(movingPiece)
       _ <- moveValidator.validate(move, movingPiece, gameState.pieces)
       newState <- updateGameState(movingPiece, move)
     } yield newState
@@ -21,7 +21,7 @@ class MoveService(moveValidator: MoveValidator, checkValidator: CheckValidator) 
     gameState.pieces
       .get(move.from)
       .map(_.asRight)
-      .getOrElse(NoPieceToMoveFromThisPosition(move).asLeft)
+      .getOrElse(NoPieceToMoveFromThisPositionError(move).asLeft)
 
   private def updateGameState(movingPiece: Piece, move: Move)(
       implicit gameState: GameState
@@ -30,7 +30,7 @@ class MoveService(moveValidator: MoveValidator, checkValidator: CheckValidator) 
     val nextPlayer = movingPiece.color.opposite
 
     for {
-      _ <- checkValidator.validateIfMoveCausedCurrentPlayerCheck(newPieces, gameState.movingColor)
+      _ <- checkValidator.validateIfIsCurrentPlayerCheck(newPieces, gameState.movingColor)
       isCheckOnNextPlayer = checkValidator.isCheckOnNextPlayer(newPieces, gameState.movingColor)
     } yield GameState(newPieces, Option.when(isCheckOnNextPlayer)(nextPlayer), nextPlayer)
   }

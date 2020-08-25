@@ -1,19 +1,15 @@
 package com.chess.service.validator
 
-import com.chess.MoveNotAllowedByPieceError
-import com.chess.model.move.{Move, Position}
-import com.chess.model.piece.{PieceColor, _}
+import com.chess.domain.move.{Move, Position}
+import com.chess.domain.piece.{PieceColor, _}
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec
 import cats.implicits.catsSyntaxEitherId
+import com.chess.service.MoveNotAllowedByPieceError
 
-class PieceMoveDirectionValidatorTest
-    extends AnyWordSpec
-    with Matchers
-    with GivenWhenThen
-    with TableDrivenPropertyChecks {
+class PieceMoveDirectionValidatorTest extends AnyWordSpec with Matchers with TableDrivenPropertyChecks {
   private val validator = new PieceMoveValidator
 
   "PieceMoveValidator" when {

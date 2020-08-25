@@ -1,7 +1,7 @@
-package com.chess.model.piece
+package com.chess.domain.piece
 
 import cats.Show
-import com.chess.model.piece.PieceColor.Color
+import com.chess.domain.piece.PieceColor.Color
 
 trait Piece {
   val color: Color

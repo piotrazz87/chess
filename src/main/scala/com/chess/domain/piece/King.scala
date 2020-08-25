@@ -1,4 +1,4 @@
-package com.chess.model.piece
+package com.chess.domain.piece
 
 import PieceColor.{Black, Color, White}
 

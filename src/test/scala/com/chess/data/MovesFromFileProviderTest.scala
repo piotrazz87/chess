@@ -1,4 +1,4 @@
-package com.chess.service.data
+package com.chess.data
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -15,10 +15,6 @@ class MovesFromFileProviderTest extends AnyWordSpec with Matchers {
       the[FileOpeningException] thrownBy movesProvider
         .provide(FileName("wrong-name.txt"))
         .unsafeRunSync() should have message "There was a problem while opening file: wrong-name.txt (No such file or directory)"
-    }
-    "throw exception when wrong format of moves" in {
-      val pathToFile = getClass.getClassLoader.getResource("wrong-moves-format.txt")
-      movesProvider.provide(FileName(pathToFile.getPath)).unsafeRunSync().nextMove() shouldBe (null)
     }
   }
 }

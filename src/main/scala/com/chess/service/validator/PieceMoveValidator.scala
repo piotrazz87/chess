@@ -1,16 +1,13 @@
 package com.chess.service.validator
 
 import cats.implicits.catsSyntaxEitherId
-import com.chess.model.move.{Move, Position}
-import com.chess.model.piece.PieceColor.Color
-import com.chess.model.piece._
-import com.chess.service.util.StepDeterminationUtil
-import com.chess.{
-  MoveError,
-  MoveNotAllowedByPieceError,
-  TargetPositionHasCollisionInMovePathError,
-  TargetPositionHasPlayersPieceMoveError
-}
+import com.chess.TargetPositionHasCollisionInMovePathError
+import com.chess.domain.move.{Move, Position}
+import com.chess.domain.piece.PieceColor.Color
+import com.chess.domain.piece._
+import com.chess.service.util.StepFactoryUtil
+import com.chess.config.TargetPositionHasCollisionInMovePathError
+import com.chess.service.{MoveError, MoveNotAllowedByPieceError, TargetPositionHasCollisionInMovePathError, TargetPositionHasPlayersPieceMoveError}
 
 import scala.annotation.tailrec
 
@@ -43,17 +40,18 @@ class PieceMoveValidator extends MoveValidator {
     Either.cond(
       hasMoveChange(move) &&
         (movingPiece match {
-          case King(_)   => (move.isDiagonalMove || move.isLinearMove) && move.isOneStepMove
-          case Queen(_)  => move.isLinearMove || move.isDiagonalMove
-          case Bishop(_) => move.isDiagonalMove
+          case King(_)   => (move.isDiagonal || move.isLinear) && move.isOneStep
+          case Queen(_)  => move.isLinear || move.isDiagonal
+          case Bishop(_) => move.isDiagonal
           case Knight(_) => move.isKnightMove
-          case Rook(_)   => move.isLinearMove
+          case Rook(_)   => move.isLinear
           case Pawn(_) =>
-            val canMoveTwoSteps = move.from.y == Pawn.InitialPositions(movingPiece.color) && move.isTwoStepUpDownMove
+            val canMoveTwoSteps = move.from.vertical == Pawn
+              .InitialPositions(movingPiece.color) && move.isTwoStepUpOrDown
             val canMoveDiagonalForEliminatingOpponent =
-              move.isDiagonalMove && move.isOneStepMove && opponentPieceExists(move, movingPiece.color, boardPieces)
+              move.isDiagonal && move.isOneStep && opponentPieceExists(move, movingPiece.color, boardPieces)
 
-            (move.isLinearMove && (move.isOneStepMove || canMoveTwoSteps)) || canMoveDiagonalForEliminatingOpponent
+            (move.isLinear && (move.isOneStep || canMoveTwoSteps)) || canMoveDiagonalForEliminatingOpponent
         }),
       (),
       MoveNotAllowedByPieceError(move, movingPiece)
@@ -64,14 +62,15 @@ class PieceMoveValidator extends MoveValidator {
       piece: Piece,
       boardPieces: Map[Position, Piece]
   ): Either[MoveError, Unit] = {
-    val step = StepDeterminationUtil.fromMove(move)
+    val step = StepFactoryUtil.fromMove(move)
 
     @tailrec
     def moveStepByStep(stepMove: Move): Either[MoveError, Unit] =
       if (stepMove.target == move.target) {
         ().asRight
       } else {
-        if (boardPieces.exists { case (pos, _) => pos == stepMove.target }) {
+        val isPieceOnCheckedPosition = boardPieces.exists { case (pos, _) => pos == stepMove.target }
+        if (isPieceOnCheckedPosition) {
           TargetPositionHasCollisionInMovePathError(move, piece).asLeft
         } else moveStepByStep(Move(step.makeStep(stepMove.from), step.makeStep(stepMove.target)))
       }
