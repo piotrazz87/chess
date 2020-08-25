@@ -1,11 +1,9 @@
 package com.chess.service.validator
 
 import cats.syntax.either._
-import com.chess.TargetPositionHasPlayersPieceMoveError
 import com.chess.domain.GameState
 import com.chess.domain.move.{Move, Position}
 import com.chess.domain.piece._
-import com.chess.config.TargetPositionHasPlayersPieceMoveError
 import com.chess.service.{MoveCausedOwnCheckError, MoveError, TargetPositionHasPlayersPieceMoveError}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec

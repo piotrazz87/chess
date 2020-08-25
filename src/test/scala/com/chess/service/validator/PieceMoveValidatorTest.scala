@@ -1,12 +1,14 @@
 package com.chess.service.validator
 
 import cats.implicits.catsSyntaxEitherId
-import com.chess.TargetPositionHasCollisionInMovePathError
 import com.chess.domain.GameState
 import com.chess.domain.move.{Move, Position}
 import com.chess.domain.piece.{Pawn, PieceColor, Rook}
-import com.chess.config.TargetPositionHasCollisionInMovePathError
-import com.chess.service.{MoveNotAllowedByPieceError, TargetPositionHasCollisionInMovePathError, TargetPositionHasPlayersPieceMoveError}
+import com.chess.service.{
+  MoveNotAllowedByPieceError,
+  TargetPositionHasCollisionInMovePathError,
+  TargetPositionHasPlayersPieceMoveError
+}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec

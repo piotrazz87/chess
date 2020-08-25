@@ -1,12 +1,10 @@
 package com.chess.service
 
 import cats.implicits.catsSyntaxEitherId
-import com.chess.MoveNotAllowedByPieceError
 import com.chess.domain.GameState
 import com.chess.domain.move.{Move, Position}
 import com.chess.domain.piece.PieceColor.{Black, White}
 import com.chess.domain.piece.Rook
-import com.chess.config.MoveNotAllowedByPieceError
 import com.chess.service.validator.{CheckValidator, MoveValidator}
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.matchers.should.Matchers

@@ -1,12 +1,10 @@
 package com.chess.service.validator
 
 import cats.implicits.catsSyntaxEitherId
-import com.chess.TargetPositionHasCollisionInMovePathError
 import com.chess.domain.move.{Move, Position}
 import com.chess.domain.piece.PieceColor.Color
 import com.chess.domain.piece._
 import com.chess.service.util.StepFactoryUtil
-import com.chess.config.TargetPositionHasCollisionInMovePathError
 import com.chess.service.{MoveError, MoveNotAllowedByPieceError, TargetPositionHasCollisionInMovePathError, TargetPositionHasPlayersPieceMoveError}
 
 import scala.annotation.tailrec

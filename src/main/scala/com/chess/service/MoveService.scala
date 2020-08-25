@@ -1,12 +1,10 @@
 package com.chess.service
 
 import cats.implicits.catsSyntaxEitherId
-import com.chess.NoPieceToMoveFromThisPositionError
 import com.chess.domain.GameState
 import com.chess.domain.move.Move
 import com.chess.domain.piece.Piece
 import com.chess.service.validator.{CheckValidator, MoveValidator}
-import com.chess.config.NoPieceToMoveFromThisPositionError
 
 class MoveService(moveValidator: MoveValidator, checkValidator: CheckValidator) {
 
