@@ -1,10 +1,10 @@
 package com.chess.module
 
 import cats.effect.Sync
-import com.chess.view.console.{ChessBoardConsoleDrawer, LiveConsole}
 import com.chess.service.data.MovesFromFileProvider
-import com.chess.service.{GameProcessor, MoveService}
 import com.chess.service.validator.{CheckValidator, PieceMoveValidator}
+import com.chess.service.{GameProcessor, MoveService}
+import com.chess.view.console.{ChessBoardConsoleDrawer, LiveConsole}
 import com.typesafe.scalalogging.LazyLogging
 
 class ChessModule[F[_]: Sync] extends LazyLogging {

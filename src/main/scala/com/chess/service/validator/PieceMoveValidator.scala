@@ -1,11 +1,16 @@
 package com.chess.service.validator
 
-import com.chess.{MoveError, MoveNotAllowedByPieceError, TargetPositionHasCollisionInMovePathError, TargetPositionHasPlayersPieceMoveError}
+import cats.implicits.catsSyntaxEitherId
+import com.chess.model.move.{Move, Position}
 import com.chess.model.piece.PieceColor.Color
 import com.chess.model.piece._
-import com.chess.model.move.{Move, Position}
-import com.chess.model._
 import com.chess.service.util.StepDeterminationUtil
+import com.chess.{
+  MoveError,
+  MoveNotAllowedByPieceError,
+  TargetPositionHasCollisionInMovePathError,
+  TargetPositionHasPlayersPieceMoveError
+}
 
 import scala.annotation.tailrec
 
@@ -44,7 +49,7 @@ class PieceMoveValidator extends MoveValidator {
           case Knight(_) => move.isKnightMove
           case Rook(_)   => move.isLinearMove
           case Pawn(_) =>
-            val canMoveTwoSteps = move.start.y == Pawn.InitialPositions(movingPiece.color) && move.isTwoStepUpDownMove
+            val canMoveTwoSteps = move.from.y == Pawn.InitialPositions(movingPiece.color) && move.isTwoStepUpDownMove
             val canMoveDiagonalForEliminatingOpponent =
               move.isDiagonalMove && move.isOneStepMove && opponentPieceExists(move, movingPiece.color, boardPieces)
 
@@ -63,22 +68,22 @@ class PieceMoveValidator extends MoveValidator {
 
     @tailrec
     def moveStepByStep(stepMove: Move): Either[MoveError, Unit] =
-      if (stepMove.start == move.target) {
-        Right(())
+      if (stepMove.target == move.target) {
+        ().asRight
       } else {
         if (boardPieces.exists { case (pos, _) => pos == stepMove.target }) {
-          Left(TargetPositionHasCollisionInMovePathError(stepMove, piece))
-        } else moveStepByStep(Move(step.makeStep(stepMove.start), stepMove.target))
+          TargetPositionHasCollisionInMovePathError(move, piece).asLeft
+        } else moveStepByStep(Move(step.makeStep(stepMove.from), step.makeStep(stepMove.target)))
       }
 
     piece match {
-      case _ @Knight(_) => Right(())
-      case _            => moveStepByStep(Move(move.start, step.makeStep(move.start)))
+      case _ @Knight(_) => ().asRight
+      case _            => moveStepByStep(Move(move.from, step.makeStep(move.from)))
     }
   }
 
   private def opponentPieceExists(move: Move, movingColor: Color, boardPieces: Map[Position, Piece]) =
     boardPieces.exists { case (pos, piece) => pos == move.target && movingColor != piece.color }
 
-  private def hasMoveChange(move: Move): Boolean = move.start != move.target
+  private def hasMoveChange(move: Move): Boolean = move.from != move.target
 }

@@ -1,17 +1,17 @@
 package com.chess.model.move
 
-case class Move(start: Position, target: Position) {
-  def isDiagonalMove: Boolean = Math.abs(start.x - target.x) - Math.abs(start.y - target.y) == 0
+case class Move(from: Position, target: Position) {
+  def isDiagonalMove: Boolean = Math.abs(from.x - target.x) - Math.abs(from.y - target.y) == 0
 
-  def isLinearMove: Boolean = !(start.x != target.x && start.y != target.y)
+  def isLinearMove: Boolean = !(from.x != target.x && from.y != target.y)
 
-  def isOneStepMove: Boolean = Math.abs(start.x - target.x) <= 1 && Math.abs(start.y - target.y) <= 1
+  def isOneStepMove: Boolean = Math.abs(from.x - target.x) <= 1 && Math.abs(from.y - target.y) <= 1
 
-  def isTwoStepUpDownMove: Boolean = start.x == target.x && Math.abs(start.y - target.y) <= 2
+  def isTwoStepUpDownMove: Boolean = from.x == target.x && Math.abs(from.y - target.y) <= 2
 
   def isKnightMove: Boolean =
-    (Math.abs(start.x - target.x) == 1 && Math.abs(start.y - target.y) == 2) ||
-      (Math.abs(start.y - target.y) == 1 && Math.abs(start.x - target.x) == 2)
+    (Math.abs(from.x - target.x) == 1 && Math.abs(from.y - target.y) == 2) ||
+      (Math.abs(from.y - target.y) == 1 && Math.abs(from.x - target.x) == 2)
 }
 
 object Move {

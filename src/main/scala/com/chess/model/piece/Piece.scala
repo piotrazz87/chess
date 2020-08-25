@@ -4,5 +4,5 @@ import PieceColor.Color
 
 trait Piece {
   val color: Color
-  val shortName: Color => String
+  val shortName: String
 }

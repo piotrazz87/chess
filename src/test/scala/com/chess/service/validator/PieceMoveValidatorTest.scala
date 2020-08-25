@@ -1,10 +1,14 @@
 package com.chess.service.validator
 
-import com.chess.{MoveNotAllowedByPieceError, TargetPositionHasCollisionInMovePathError, TargetPositionHasPlayersPieceMoveError}
+import cats.implicits.catsSyntaxEitherId
+import com.chess.{
+  MoveNotAllowedByPieceError,
+  TargetPositionHasCollisionInMovePathError,
+  TargetPositionHasPlayersPieceMoveError
+}
 import com.chess.model.move.{Move, Position}
 import com.chess.model.piece.{Pawn, PieceColor, Rook}
 import com.chess.model.GameState
-import com.chess.model.TargetPositionHasCollisionInMovePathError
 import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -16,7 +20,7 @@ class PieceMoveValidatorTest extends AnyWordSpec with Matchers with GivenWhenThe
 
   "PieceMoveValidator" when {
     "piece on target position" should {
-      val pawn = Pawn(PieceColor.White)
+      val pawn = Pawn(PieceColor.Black)
       "allow move on empty square" in {
         val movesToEmptySquares =
           Table(
@@ -29,11 +33,11 @@ class PieceMoveValidatorTest extends AnyWordSpec with Matchers with GivenWhenThe
           )
 
         forAll(movesToEmptySquares) { (from, to) =>
-          validator.validateTargetPosition(Move(from, to), pawn, boardPieces) shouldBe Right()
+          validator.validateTargetPosition(Move(from, to), pawn, boardPieces) shouldBe ().asRight
         }
       }
       "allow move on square with opponent" in {
-        validator.validateTargetPosition(Move(Position(8, 8), Position(4, 7)), pawn, boardPieces) shouldBe Right()
+        validator.validateTargetPosition(Move(Position(8, 8), Position(4, 7)), pawn, boardPieces) shouldBe ().asRight
       }
       "disallow moves to squares with owned pieces" in {
         val movesToSquaresWithOwnedPieces =
@@ -45,15 +49,14 @@ class PieceMoveValidatorTest extends AnyWordSpec with Matchers with GivenWhenThe
             (Position(8, 8), Position(1, 1))
           )
         forAll(movesToSquaresWithOwnedPieces) { (from, to) =>
-          validator.validateTargetPosition(Move(from, to), pawn, boardPieces) shouldBe Left(
-            TargetPositionHasPlayersPieceMoveError(Move(from, to), pawn)
-          )
+          validator.validateTargetPosition(Move(from, to), pawn, boardPieces) shouldBe
+            TargetPositionHasPlayersPieceMoveError(Move(from, to), pawn).asLeft
         }
       }
     }
     "piece" should {
-      val pawn = Pawn(PieceColor.White)
-      val rook = Rook(PieceColor.Black)
+      val pawn = Pawn(PieceColor.Black)
+      val rook = Rook(PieceColor.White)
 
       "piece has ability to move" in {
         val movesToEmptySquares =
@@ -63,7 +66,7 @@ class PieceMoveValidatorTest extends AnyWordSpec with Matchers with GivenWhenThe
             (Position(3, 1), Position(3, 2))
           )
         forAll(movesToEmptySquares) { (from, to) =>
-          validator.validateTargetPosition(Move(from, to), pawn, boardPieces) shouldBe Right()
+          validator.validateTargetPosition(Move(from, to), pawn, boardPieces) shouldBe ().asRight
         }
       }
       "piece can't move causing target position error" in {
@@ -74,9 +77,8 @@ class PieceMoveValidatorTest extends AnyWordSpec with Matchers with GivenWhenThe
             (Position(4, 1), Position(3, 1))
           )
         forAll(movesToCollisionSquares) { (from, to) =>
-          validator.validate(Move(from, to), pawn, boardPieces) shouldBe Left(
-            TargetPositionHasPlayersPieceMoveError(Move(from, to), pawn)
-          )
+          validator.validate(Move(from, to), pawn, boardPieces) shouldBe
+            TargetPositionHasPlayersPieceMoveError(Move(from, to), pawn).asLeft
         }
       }
       "piece can't move causing move not allowed error" in {
@@ -87,22 +89,20 @@ class PieceMoveValidatorTest extends AnyWordSpec with Matchers with GivenWhenThe
             (Position(4, 1), Position(3, 6))
           )
         forAll(movesToCollisionSquares) { (from, to) =>
-          validator.validate(Move(from, to), pawn, boardPieces) shouldBe Left(
-            MoveNotAllowedByPieceError(Move(from, to), pawn)
-          )
+          validator.validate(Move(from, to), pawn, boardPieces) shouldBe
+            MoveNotAllowedByPieceError(Move(from, to), pawn).asLeft
         }
       }
       "piece can't move causing collision error" in {
         val movesToCollisionSquares =
           Table(
             ("positionFrom", "positionTo"),
-            (Position(0, 7), Position(0, 1)),
-            (Position(0, 7), Position(0, 5))
+            (Position(7, 6), Position(7, 0)),
+            (Position(0, 6), Position(0, 0))
           )
         forAll(movesToCollisionSquares) { (from, to) =>
-          validator.validate(Move(from, to), rook, boardPieces) shouldBe Left(
-            TargetPositionHasCollisionInMovePathError(Move(from, to), rook)
-          )
+          validator.validate(Move(from, to), rook, boardPieces) shouldBe
+            TargetPositionHasCollisionInMovePathError(Move(from, to), rook).asLeft
         }
       }
     }

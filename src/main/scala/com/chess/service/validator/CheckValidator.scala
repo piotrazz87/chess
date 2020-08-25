@@ -1,11 +1,11 @@
 package com.chess.service.validator
 
+import cats.implicits.catsSyntaxEitherId
 import com.chess.{CheckOnKingError, MoveCausedOwnCheckError, MoveError}
 import com.chess.model.piece.PieceColor.Color
 import com.chess.model.move.{Move, Position}
 import com.chess.model.piece.{King, Piece}
 import com.chess.model.GameState
-import com.chess.model.MoveCausedOwnCheckError
 
 class CheckValidator(moveValidator: MoveValidator) {
 
@@ -13,11 +13,11 @@ class CheckValidator(moveValidator: MoveValidator) {
     gameState.checkOnColor
       .map { checkedColor =>
         piece match {
-          case King(_) => Right(())
+          case King(_) => ().asRight
           case _       => Either.cond(checkedColor != piece.color, (), CheckOnKingError)
         }
       }
-      .getOrElse(Right())
+      .getOrElse(().asRight)
 
   def validateIfMoveCausedCurrentPlayerCheck(
       boardPieces: Map[Position, Piece],
@@ -26,16 +26,14 @@ class CheckValidator(moveValidator: MoveValidator) {
     Either.cond(!isCurrentPlayerCheck(boardPieces, movingColor), (), MoveCausedOwnCheckError)
 
   def isCheckOnNextPlayer(boardPieces: Map[Position, Piece], movingColor: Color): Boolean =
-    isCheck(_ != movingColor)(boardPieces)
+    isCheck(_ != movingColor, boardPieces)
 
   private def isCurrentPlayerCheck(boardPieces: Map[Position, Piece], movingColor: Color): Boolean =
-    isCheck(_ == movingColor)(boardPieces)
+    isCheck(_ == movingColor, boardPieces)
 
-  private def isCheck(p: Color => Boolean)(boardPieces: Map[Position, Piece]): Boolean = {
-    val oppositePieces = boardPieces.filterNot { case (_, piece) => p(piece.color) }
-    val currentKing = getKingFor(p, boardPieces)
-
-    isCheckOn(currentKing, oppositePieces)
+  private def isCheck(isCurrentColor: Color => Boolean, boardPieces: Map[Position, Piece]): Boolean = {
+    val currentKing = getKingFor(isCurrentColor, boardPieces)
+    isCheckOn(currentKing, boardPieces, isCurrentColor)
   }
 
   //TODO:remove exception
@@ -48,10 +46,16 @@ class CheckValidator(moveValidator: MoveValidator) {
       .map { case (_, kingPosition) => kingPosition }
       .getOrElse(throw new RuntimeException("King has escaped!"))
 
-  private def isCheckOn(oppositeKingPosition: Position, playerPieces: Map[Position, Piece]): Boolean =
-    playerPieces
+  private def isCheckOn(
+      oppositeKingPosition: Position,
+      boardPieces: Map[Position, Piece],
+      isCurrentColor: Color => Boolean
+  ): Boolean = {
+    val oppositePieces = boardPieces.filterNot { case (_, piece) => isCurrentColor(piece.color) }
+    oppositePieces
       .map {
-        case (pos, piece) => moveValidator.validate(Move(pos, oppositeKingPosition), piece, playerPieces)
+        case (pos, piece) => moveValidator.validate(Move(pos, oppositeKingPosition), piece, boardPieces)
       }
       .exists(_.isRight)
+  }
 }

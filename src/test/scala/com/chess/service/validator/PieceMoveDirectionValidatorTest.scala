@@ -7,6 +7,7 @@ import org.scalatest.GivenWhenThen
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpec
+import cats.implicits.catsSyntaxEitherId
 
 class PieceMoveDirectionValidatorTest
     extends AnyWordSpec
@@ -41,14 +42,14 @@ class PieceMoveDirectionValidatorTest
         )
       "allow moves" in {
         forAll(correctMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), king, Map.empty[Position, Piece]) shouldBe Right()
+          validator.validateIfPieceCanMakeMove(Move(from, to), king, Map.empty[Position, Piece]) shouldBe ().asRight
         }
       }
       "disallow moves" in {
         forAll(forbiddenMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), king, Map.empty[Position, Piece]) shouldBe Left(
-            MoveNotAllowedByPieceError(Move(from, to), king)
-          )
+          validator.validateIfPieceCanMakeMove(Move(from, to), king, Map.empty[Position, Piece]) shouldBe
+            MoveNotAllowedByPieceError(Move(from, to), king).asLeft
+
         }
       }
     }
@@ -73,14 +74,14 @@ class PieceMoveDirectionValidatorTest
         )
       "allow moves" in {
         forAll(correctMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), queen, Map.empty[Position, Piece]) shouldBe Right()
+          validator.validateIfPieceCanMakeMove(Move(from, to), queen, Map.empty[Position, Piece]) shouldBe ().asRight
         }
       }
       "disallow moves" in {
         forAll(forbiddenMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), queen, Map.empty[Position, Piece]) shouldBe Left(
-            MoveNotAllowedByPieceError(Move(from, to), queen)
-          )
+          validator.validateIfPieceCanMakeMove(Move(from, to), queen, Map.empty[Position, Piece]) shouldBe
+            MoveNotAllowedByPieceError(Move(from, to), queen).asLeft
+
         }
       }
     }
@@ -107,14 +108,13 @@ class PieceMoveDirectionValidatorTest
         )
       "allow moves" in {
         forAll(correctMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), bishop, Map.empty[Position, Piece]) shouldBe Right()
+          validator.validateIfPieceCanMakeMove(Move(from, to), bishop, Map.empty[Position, Piece]) shouldBe ().asRight
         }
       }
       "disallow moves" in {
         forAll(forbiddenMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), bishop, Map.empty[Position, Piece]) shouldBe Left(
-            MoveNotAllowedByPieceError(Move(from, to), bishop)
-          )
+          validator.validateIfPieceCanMakeMove(Move(from, to), bishop, Map.empty[Position, Piece]) shouldBe
+            MoveNotAllowedByPieceError(Move(from, to), bishop).asLeft
         }
       }
     }
@@ -141,14 +141,13 @@ class PieceMoveDirectionValidatorTest
         )
       "allow moves" in {
         forAll(correctMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), knight, Map.empty[Position, Piece]) shouldBe Right()
+          validator.validateIfPieceCanMakeMove(Move(from, to), knight, Map.empty[Position, Piece]) shouldBe ().asRight
         }
       }
       "disallow moves" in {
         forAll(forbiddenMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), knight, Map.empty[Position, Piece]) shouldBe Left(
-            MoveNotAllowedByPieceError(Move(from, to), knight)
-          )
+          validator.validateIfPieceCanMakeMove(Move(from, to), knight, Map.empty[Position, Piece]) shouldBe
+            MoveNotAllowedByPieceError(Move(from, to), knight).asLeft
         }
       }
     }
@@ -175,45 +174,43 @@ class PieceMoveDirectionValidatorTest
         )
       "allow moves" in {
         forAll(correctMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), rook, Map.empty[Position, Piece]) shouldBe Right()
+          validator.validateIfPieceCanMakeMove(Move(from, to), rook, Map.empty[Position, Piece]) shouldBe ().asRight
         }
       }
       "disallow moves" in {
         forAll(forbiddenMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), rook, Map.empty[Position, Piece]) shouldBe Left(
-            MoveNotAllowedByPieceError(Move(from, to), rook)
-          )
+          validator.validateIfPieceCanMakeMove(Move(from, to), rook, Map.empty[Position, Piece]) shouldBe
+            MoveNotAllowedByPieceError(Move(from, to), rook).asLeft
         }
       }
     }
     "pawn" should {
-      val pawn = Pawn(PieceColor.Black)
+      val pawn = Pawn(PieceColor.White)
       val correctMoves =
         Table(
           ("positionFrom", "positionTo"),
           (Position(6, 1), Position(6, 2)),
           (Position(1, 6), Position(1, 4)),
-          (Position(6, 1), Position(7, 2)),
+          (Position(6, 6), Position(6, 5)),
         )
       val forbiddenMoves =
         Table(
           ("positionFrom", "positionTo"),
           (Position(3, 1), Position(2, 2)),
-          (Position(6, 1), Position(7, 2)),
+          (Position(1, 1), Position(7, 2)),
           (Position(8, 8), Position(4, 7)),
           (Position(1, 1), Position(2, 8)),
           (Position(8, 8), Position(1, 3))
         )
       "allow moves" in {
         forAll(correctMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), pawn, Map(Position(7, 2) -> Pawn(PieceColor.White))) shouldBe Right()
+          validator.validateIfPieceCanMakeMove(Move(from, to), pawn, Map(Position(7, 2) -> Pawn(PieceColor.White))) shouldBe ().asRight
         }
       }
       "disallow moves" in {
         forAll(forbiddenMoves) { (from, to) =>
-          validator.validateIfPieceCanMakeMove(Move(from, to), pawn, Map(Position(7, 2) -> Pawn(PieceColor.Black))) shouldBe Left(
-            MoveNotAllowedByPieceError(Move(from, to), pawn)
-          )
+          validator.validateIfPieceCanMakeMove(Move(from, to), pawn, Map(Position(7, 2) -> Pawn(PieceColor.Black))) shouldBe
+            MoveNotAllowedByPieceError(Move(from, to), pawn).asLeft
         }
       }
     }

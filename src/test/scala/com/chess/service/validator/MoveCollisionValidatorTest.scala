@@ -1,5 +1,6 @@
 package com.chess.service.validator
 
+import cats.implicits.catsSyntaxEitherId
 import com.chess.TargetPositionHasCollisionInMovePathError
 import com.chess.model.move.{Move, Position}
 import com.chess.model.GameState
@@ -28,31 +29,28 @@ class MoveCollisionValidatorTest extends AnyWordSpec with Matchers with GivenWhe
         )
       "allow moves" in {
         forAll(correctMoves) { (from, to) =>
-          validator.validateIfMoveHasCollisionWithOtherPieces(Move(from, to), king, boardPieces) shouldBe Right()
+          validator.validateIfMoveHasCollisionWithOtherPieces(Move(from, to), king, boardPieces) shouldBe ().asRight
         }
       }
     }
     "piece" should {
-      val queen = Queen(PieceColor.White)
+      val queen = Queen(PieceColor.Black)
       val moves =
         Table(
           ("positionFrom", "positionTo"),
-          (Position(3, 0), Position(0, 3)),
           (Position(3, 0), Position(3, 7)),
-          (Position(3, 0), Position(3, 5))
+          (Position(3, 0), Position(3, 6))
         )
 
       "allow moves" in {
         forAll(moves) { (from, to) =>
-          validator.validateIfMoveHasCollisionWithOtherPieces(Move(from, to), queen, Map.empty[Position, Piece]) shouldBe Right()
+          validator.validateIfMoveHasCollisionWithOtherPieces(Move(from, to), queen, Map.empty[Position, Piece]) shouldBe ().asRight
         }
       }
-
       "disallow moves" in {
         forAll(moves) { (from, to) =>
-          validator.validateIfMoveHasCollisionWithOtherPieces(Move(from, to), queen, boardPieces) shouldBe Left(
-            TargetPositionHasCollisionInMovePathError(Move(from, to), queen)
-          )
+          validator.validateIfMoveHasCollisionWithOtherPieces(Move(from, to), queen, boardPieces) shouldBe
+            TargetPositionHasCollisionInMovePathError(Move(from, to), queen).asLeft
         }
       }
     }

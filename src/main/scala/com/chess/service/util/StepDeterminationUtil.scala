@@ -6,7 +6,7 @@ import com.chess.model.move.Step.Step
 object StepDeterminationUtil {
   //TODO:refactor it
   def fromMove(move: Move): Step = {
-    val from = move.start
+    val from = move.from
     val to = move.target
 
     //left

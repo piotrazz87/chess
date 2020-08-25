@@ -17,7 +17,7 @@ case class NoPieceToMoveFromThisPosition(position: Position) extends MoveError {
   override def message: String = s"There is no piece to move at position ${position.x} ${position.y}"
 }
 case class MoveNotAllowedByPieceError(move: Move, piece: Piece) extends MoveError {
-  override def message: String = s"Move from ${move.start.x} ${move.start.y} isn't allowed for piece ${piece.toString}"
+  override def message: String = s"Move from ${move.from.x} ${move.from.y} isn't allowed for piece ${piece.toString}"
 }
 
 case class TargetPositionHasPlayersPieceMoveError(move: Move, piece: Piece) extends MoveError {
