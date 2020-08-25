@@ -25,7 +25,7 @@ class CheckValidator(moveValidator: MoveValidator) {
   }
 
   //TODO:remove exception
-  private def getKingFor(isCurrentColor: Color => Boolean, boardPieces: Map[Position, Piece]) =
+  private def getKingFor(isCurrentColor: Color => Boolean, boardPieces: Map[Position, Piece]): Position =
     boardPieces
       .collect {
         case (position, piece: King) => (piece.color, position)
